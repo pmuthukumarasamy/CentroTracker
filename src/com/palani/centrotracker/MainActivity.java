@@ -156,26 +156,61 @@ public class MainActivity extends Activity {
 		map.addPolyline(new PolylineOptions()
 				.geodesic(true)
 				.color(Color.BLUE)
-				.add(new LatLng(43.043306, -76.150863))
-				// Centro Transit Hub
-				.add(new LatLng(43.042769, -76.150873))
-				// S Warren St & E Adams St
-				.add(new LatLng(43.042740, -76.147542))
-				// E Adams St & S State St
-				.add(new LatLng(43.049514, -76.147401))
-				// S State St & E Washington St
-				.add(new LatLng(43.049520, -76.149322))
-				.add(new LatLng(43.049634, -76.155496))
-				.add(new LatLng(43.051296, -76.155475))
-				.add(new LatLng(43.051911, -76.155089))
-				.add(new LatLng(43.052389, -76.154901))
-				.add(new LatLng(43.054244, -76.154837))
-
-				.add(new LatLng(43.054714, -76.154751))
-				.add(new LatLng(43.057128, -76.153131))
-				.add(new LatLng(43.057368, -76.152803))
-				.add(new LatLng(43.058355, -76.153801))
-				.add(new LatLng(43.058728, -76.154220))
+				.add(new LatLng(43.043306, -76.150863))//Centro Transit Hub
+				.add(new LatLng(43.042769, -76.150873))//S Warren St & E Adams St
+				.add(new LatLng(43.042740, -76.147542))//E Adams St & S State St
+				.add(new LatLng(43.049514, -76.147401))//S State St & E Washington St
+				.add(new LatLng(43.049545, -76.149324))//E Washington & Montgomery st				
+				.add(new LatLng(43.049574, -76.149753))//E Washington & E Gennese St
+				.add(new LatLng(43.049582, -76.150810))//E Washington & S Warren St
+				.add(new LatLng(43.049590, -76.151498))//E Washington & Bank Alley
+				.add(new LatLng(43.049590, -76.152213))//E Washington & S Salina St
+				.add(new LatLng(43.049619, -76.153586))//W Washington & S Clinton St
+				.add(new LatLng(43.049631, -76.155523))//W Washington & S Franklin St
+				.add(new LatLng(43.050564, -76.155485))//S Franklin St & W Water St
+				.add(new LatLng(43.050897, -76.155478))//S Franklin St & Erie Blvd W
+				.add(new LatLng(43.050971, -76.155474))//Erie Blvd W & N Franklin St
+				.add(new LatLng(43.051316, -76.155465))//N Franklin St;
+				.add(new LatLng(43.051416, -76.155421))//N Franklin St;
+				.add(new LatLng(43.051955, -76.155069))//N Franklin St & W Genessee St
+				.add(new LatLng(43.051967, -76.155064))//W Genessee St & N Franklin St				
+				.add(new LatLng(43.052400, -76.154901))//N Franklin St & W Willow St
+				.add(new LatLng(43.053360, -76.154835))//N Franklin St & Herald PI
+				.add(new LatLng(43.054113, -76.154838))//N Franklin St & 690
+				.add(new LatLng(43.054124, -76.154838))//690 & N Franklin St
+				.add(new LatLng(43.054294, -76.154831))//690 & N Franklin St
+				.add(new LatLng(43.054307, -76.154830))//690 & N Franklin St
+				.add(new LatLng(43.054402, -76.154825))//N Franklin St
+				.add(new LatLng(43.054569, -76.154806))//N Franklin St
+				.add(new LatLng(43.054749, -76.154756))//N Franklin St & Websters Landing
+				.add(new LatLng(43.055034, -76.154493))//Butternut St
+				.add(new LatLng(43.056398, -76.153623))//Butternut St
+				.add(new LatLng(43.056618, -76.153485))//Butternut St
+				.add(new LatLng(43.056859, -76.153339))//Butternut St
+				.add(new LatLng(43.056971, -76.153257))//Butternut St
+				.add(new LatLng(43.057117, -76.153142))//Butternut St
+				.add(new LatLng(43.057194, -76.153049))//Butternut St
+				.add(new LatLng(43.057283, -76.152910))//Butternut St & Salt St
+				.add(new LatLng(43.057376, -76.152794))//Butternut St
+				.add(new LatLng(43.057499, -76.152466))//Butternut St & N State St
+				.add(new LatLng(43.058440, -76.153211))//N State St & I81 Ramp
+				.add(new LatLng(43.058348, -76.153316))//I81 Ramp
+				.add(new LatLng(43.058323, -76.153355))//I81 Ramp
+				.add(new LatLng(43.058307, -76.153388))//I81 Ramp
+				.add(new LatLng(43.058294, -76.153425))//I81 Ramp
+				.add(new LatLng(43.058280, -76.153484))//I81 Ramp
+				.add(new LatLng(43.058279, -76.153545))//I81 Ramp
+				.add(new LatLng(43.058285, -76.153609))//I81 Ramp
+				.add(new LatLng(43.058350, -76.153792))//Ramp
+				.add(new LatLng(43.058470, -76.153966))//Ramp
+				.add(new LatLng(43.058615, -76.154120))//Ramp
+				.add(new LatLng(43.058748, -76.154240))//Merge on to I81
+				.add(new LatLng(43.058762, -76.154265))//Merge on to I81
+				.add(new LatLng(43.058801, -76.154360))//I81
+				
+				
+				
+				
 				.add(new LatLng(43.058810, -76.154370))
 				.add(new LatLng(43.061146, -76.156124))
 				.add(new LatLng(43.062780, -76.158323))
