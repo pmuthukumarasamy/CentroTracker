@@ -1,9 +1,12 @@
 package com.palani.centrotracker;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,10 +29,12 @@ import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.palani.dataModel.Bus;
 
 public class MainActivity extends Activity {
 
@@ -37,6 +42,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
 		// Get a handle to the Map Fragment
 		final GoogleMap map = ((MapFragment) getFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
@@ -59,29 +65,222 @@ public class MainActivity extends Activity {
 					currentLocation.getLongitude());
 		}
 
-		map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 10));
+		map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 15));
 
-		Map<LatLng, String> busStop = new HashMap<LatLng, String>();
+		final Map<LatLng, Bus> busStop = new HashMap<LatLng, Bus>();
 
-		busStop.put(new LatLng(43.131380, -76.185197), "NorStar Apartments");
-		busStop.put(new LatLng(43.147363, -76.183728),
-				"Stonedale Dr & New Hope East");
-		busStop.put(new LatLng(43.148784, -76.193417), "Maltlage & Wetzel");
-		busStop.put(new LatLng(43.131380, -76.185197), "Norstar Apartments");
-		busStop.put(new LatLng(43.126856, -76.169964),
-				"Merril Farms (Harvest & CedarPost)");
-		busStop.put(new LatLng(43.121675, -76.163188), "North Medical Center");
-		busStop.put(new LatLng(43.093386, -76.171071), "7th North & Buckley Rd");
-		busStop.put(new LatLng(43.049457, -76.153897),
-				"Washington & Clinton/Franklin St");
-		busStop.put(new LatLng(43.045469, -76.148538), "S State & Madison St");
-		busStop.put(new LatLng(43.043306, -76.150863), "Salina & Adams St");
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+		String currentSchedule = sdf.format(new Date());
+		boolean taftRoute = false;
+		boolean stoneDaleRoute = false;
+		try {
 
-		Iterator<Entry<LatLng, String>> iterator = busStop.entrySet()
-				.iterator();
+			if (sdf.parse(currentSchedule).after(sdf.parse("15:35"))
+					&& sdf.parse(currentSchedule).before(sdf.parse("18:30"))) {
+				taftRoute = true;
+			}
+
+			if ((sdf.parse(currentSchedule).after(sdf.parse("05:00")) && sdf
+					.parse(currentSchedule).before(sdf.parse("05:35")))
+					|| (sdf.parse(currentSchedule).after(sdf.parse("06:10")) && sdf
+							.parse(currentSchedule).before(sdf.parse("07:00")))
+					|| (sdf.parse(currentSchedule).after(sdf.parse("08:45")) && sdf
+							.parse(currentSchedule).before(sdf.parse("09:30")))
+					|| (sdf.parse(currentSchedule).after(sdf.parse("15:00")) && sdf
+							.parse(currentSchedule).before(sdf.parse("18:30")))) {
+				stoneDaleRoute = true;
+			}
+		} catch (ParseException cx) {
+
+		}
+
+		Bus a = new Bus();
+		a.setName("NorStar Apartments");
+		List<Date> stopTime = new ArrayList<Date>();
+		SimpleDateFormat tformat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+
+		try {
+			stopTime.add(tformat.parse("05:40"));
+			stopTime.add(tformat.parse("06:11"));
+			stopTime.add(tformat.parse("06:43"));
+			stopTime.add(tformat.parse("07:26"));
+			stopTime.add(tformat.parse("09:13"));
+			stopTime.add(tformat.parse("12:18"));
+			stopTime.add(tformat.parse("15:28"));
+			stopTime.add(tformat.parse("16:24"));
+			stopTime.add(tformat.parse("17:19"));
+			stopTime.add(tformat.parse("18:09"));
+		} catch (ParseException e1) {
+
+		}
+
+		a.setSchedules(stopTime);
+		busStop.put(new LatLng(43.13137998595569, -76.18519697338343), a);
+
+		Bus b = new Bus();
+		b.setName("Stonedale Dr & New Hope East");
+		stopTime = new ArrayList<Date>();
+		;
+
+		try {
+			stopTime.add(tformat.parse("05:31"));
+			stopTime.add(tformat.parse("06:46"));
+			stopTime.add(tformat.parse("09:16"));
+			stopTime.add(tformat.parse("15:31"));
+			stopTime.add(tformat.parse("16:27"));
+			stopTime.add(tformat.parse("17:22"));
+			stopTime.add(tformat.parse("18:12"));
+		} catch (ParseException e) {
+
+		}
+		b.setSchedules(stopTime);
+		if (stoneDaleRoute)
+			busStop.put(new LatLng(43.14736311717888, -76.18372812867165), b);
+
+		Bus c = new Bus();
+		c.setName("Maltlage & Wetzel");
+		stopTime = new ArrayList<Date>();
+
+		try {
+			stopTime.add(tformat.parse("05:35"));
+			stopTime.add(tformat.parse("06:18"));
+			stopTime.add(tformat.parse("06:50"));
+			stopTime.add(tformat.parse("07:33"));
+			stopTime.add(tformat.parse("09:20"));
+			stopTime.add(tformat.parse("12:25"));
+			stopTime.add(tformat.parse("15:35"));
+			stopTime.add(tformat.parse("16:31"));
+			stopTime.add(tformat.parse("17:26"));
+			stopTime.add(tformat.parse("18:16"));
+		} catch (ParseException e) {
+
+		}
+		c.setSchedules(stopTime);
+		busStop.put(new LatLng(43.148784078054895, -76.19341693818569), c);
+
+		Bus d = new Bus();
+		d.setName("Merril Farms (Harvest & Cedarpost)");
+		stopTime = new ArrayList<Date>();
+
+		try {
+			stopTime.add(tformat.parse("16:12"));
+			stopTime.add(tformat.parse("17:07"));
+			stopTime.add(tformat.parse("17:57"));
+		} catch (ParseException e) {
+
+		}
+		d.setSchedules(stopTime);
+		if (taftRoute)
+			busStop.put(new LatLng(43.126855921306564, -76.1699640378356), d);
+
+		Bus e = new Bus();
+		e.setName("North Medical Center");
+		stopTime = new ArrayList<Date>();
+
+		try {
+			stopTime.add(tformat.parse("05:22"));
+			stopTime.add(tformat.parse("06:02"));
+			stopTime.add(tformat.parse("06:34"));
+			stopTime.add(tformat.parse("07:17"));
+			stopTime.add(tformat.parse("09:04"));
+			stopTime.add(tformat.parse("12:09"));
+			stopTime.add(tformat.parse("15:19"));
+			stopTime.add(tformat.parse("16:09"));
+			stopTime.add(tformat.parse("17:04"));
+			stopTime.add(tformat.parse("17:54"));
+		} catch (ParseException e3) {
+
+		}
+		e.setSchedules(stopTime);
+		busStop.put(new LatLng(43.11959087862927, -76.16140712052584), e);
+
+		Bus f = new Bus();
+		f.setName("7th North & Buckley Rd");
+		stopTime = new ArrayList<Date>();
+
+		try {
+			stopTime.add(tformat.parse("05:14"));
+			stopTime.add(tformat.parse("05:54"));
+			stopTime.add(tformat.parse("06:26"));
+			stopTime.add(tformat.parse("07:09"));
+			stopTime.add(tformat.parse("08:56"));
+			stopTime.add(tformat.parse("12:01"));
+			stopTime.add(tformat.parse("15:11"));
+			stopTime.add(tformat.parse("16:01"));
+			stopTime.add(tformat.parse("16:56"));
+			stopTime.add(tformat.parse("17:46"));
+		} catch (ParseException e4) {
+
+		}
+		f.setSchedules(stopTime);
+		busStop.put(new LatLng(43.09338595251225, -76.1710711196065), f);
+
+		Bus g = new Bus();
+		g.setName("Washington & Franklin St");
+		stopTime = new ArrayList<Date>();
+
+		try {
+			stopTime.add(tformat.parse("05:08"));
+			stopTime.add(tformat.parse("05:48"));
+			stopTime.add(tformat.parse("06:20"));
+			stopTime.add(tformat.parse("07:03"));
+			stopTime.add(tformat.parse("08:50"));
+			stopTime.add(tformat.parse("11:55"));
+			stopTime.add(tformat.parse("15:05"));
+			stopTime.add(tformat.parse("15:55"));
+			stopTime.add(tformat.parse("16:50"));
+			stopTime.add(tformat.parse("17:40"));
+		} catch (ParseException e5) {
+
+		}
+		g.setSchedules(stopTime);
+		busStop.put(new LatLng(43.04963102114678, -76.15551698952913), g);
+		Bus h = new Bus();
+		h.setName("S State & Madison St");
+		stopTime = new ArrayList<Date>();
+
+		try {
+			stopTime.add(tformat.parse("05:05"));
+			stopTime.add(tformat.parse("05:45"));
+			stopTime.add(tformat.parse("06:17"));
+			stopTime.add(tformat.parse("07:00"));
+			stopTime.add(tformat.parse("08:47"));
+			stopTime.add(tformat.parse("11:52"));
+			stopTime.add(tformat.parse("15:02"));
+			stopTime.add(tformat.parse("15:52"));
+			stopTime.add(tformat.parse("16:47"));
+			stopTime.add(tformat.parse("17:37"));
+		} catch (ParseException e6) {
+
+		}
+		h.setSchedules(stopTime);
+		busStop.put(new LatLng(43.045474086856096, -76.14750389009714), h);
+
+		Bus i = new Bus();
+		i.setName("Salina & Adams St");
+		List<Date> istopTime = new ArrayList<Date>();
+
+		try {
+			istopTime.add(tformat.parse("05:03"));
+			istopTime.add(tformat.parse("05:43"));
+			istopTime.add(tformat.parse("06:15"));
+			istopTime.add(tformat.parse("06:58"));
+			istopTime.add(tformat.parse("08:45"));
+			istopTime.add(tformat.parse("11:50"));
+			istopTime.add(tformat.parse("15:00"));
+			istopTime.add(tformat.parse("15:50"));
+			istopTime.add(tformat.parse("16:45"));
+			istopTime.add(tformat.parse("17:35"));
+		} catch (ParseException e7) {
+
+		}
+		i.setSchedules(istopTime);
+		busStop.put(new LatLng(43.04330607725828, -76.15086302161217), i);
+
+		Iterator<Entry<LatLng, Bus>> iterator = busStop.entrySet().iterator();
 
 		while (iterator.hasNext()) {
-			Map.Entry<LatLng, String> stop = (Map.Entry<LatLng, String>) iterator
+			Map.Entry<LatLng, Bus> stop = (Map.Entry<LatLng, Bus>) iterator
 					.next();
 			map.addMarker(new MarkerOptions()
 
@@ -89,31 +288,61 @@ public class MainActivity extends Activity {
 							.fromResource(R.drawable.bus_green_icon))
 					.anchor(0.0f, 1.0f)
 					// Anchors the marker on the bottom left
-					.title(stop.getValue()).snippet("").position(stop.getKey()));
+					.position(stop.getKey()));
 
 		}
 
 		map.setInfoWindowAdapter(new InfoWindowAdapter() {
+			Map<LatLng, Bus> localStop = busStop;
 
 			@Override
 			public View getInfoWindow(Marker marker) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			public View getInfoContents(Marker marker) {
+
 				View infoWindow = getLayoutInflater().inflate(
 						R.layout.info_window_layout, null);
+
 				try {
 					TextView lat = (TextView) infoWindow.findViewById(R.id.lat);
 					TextView lon = (TextView) infoWindow.findViewById(R.id.lon);
 					SimpleDateFormat sdf = new SimpleDateFormat("h:mm a",
 							Locale.ENGLISH);
 
-					lat.setText("Current Time :" + sdf.format(new Date()));
+					String name = "";
+					String t = "";
+					Bus bus = localStop.get(marker.getPosition());
+					if (bus != null) {
+						name += "Stop Name : \t" + bus.getName();
 
-					lon.setText("Next Trip: Coming soon..");
+						int count = 0;
+						for (Date d : bus.getSchedules()) {
+							SimpleDateFormat cdf = new SimpleDateFormat(
+									"HH:mm", Locale.ENGLISH);
+
+							if (d.after(cdf.parse(cdf.format(new Date())))) {
+								if (count == 0)
+									t = sdf.format(d);
+								count = 1;
+							}
+
+						}
+					} else
+						name += "Location : \t" + marker.getPosition();
+
+					lat.setText(name);
+					lat.setTextColor(Color.BLUE);
+
+					String info = "";
+					info += "\n Current Time      : " + sdf.format(new Date());
+					if (t.length() > 1)
+						info += "\n Next Arrival Time : " + t;
+
+					lon.setText(info);
+
 				} catch (Exception ex) {
 					Logger.getLogger(MainActivity.class.getName()).log(
 							Level.SEVERE,
@@ -126,232 +355,380 @@ public class MainActivity extends Activity {
 		map.addMarker(new MarkerOptions()
 				.icon(BitmapDescriptorFactory.fromResource(R.drawable.centro))
 				.anchor(0.0f, 1.0f).title("Centro Transit Hub")
-				.position(new LatLng(43.0432043, -76.1511651)));
+				.position(new LatLng(43.04320438867024, -76.15116510540247)));
 
-		/* Stonedale */
-		map.addPolyline(new PolylineOptions().geodesic(true).color(Color.GREEN)
-				.add(new LatLng(43.147021, -76.187909))
-				.add(new LatLng(43.147147, -76.184696))
-				.add(new LatLng(43.147166, -76.184014))
-				.add(new LatLng(43.147342, -76.183295))
-				.add(new LatLng(43.145710, -76.182330))
-				.add(new LatLng(43.146090, -76.181547))
-				.add(new LatLng(43.146411, -76.180302))
-				.add(new LatLng(43.146630, -76.180088))
-				.add(new LatLng(43.148473, -76.180259))
-				.add(new LatLng(43.148712, -76.180334))
-				.add(new LatLng(43.149029, -76.180506))
-				.add(new LatLng(43.149464, -76.180576))
-				.add(new LatLng(43.149209, -76.185473))
-				.add(new LatLng(43.149147, -76.187185))
-				.add(new LatLng(43.149240, -76.188317)));
-		/* West Taft */
-		map.addPolyline(new PolylineOptions().geodesic(true).color(Color.GREEN)
-				.add(new LatLng(43.121544, -76.166953))
-				.add(new LatLng(43.121293, -76.179013))
-				.add(new LatLng(43.121309, -76.180837))
-				.add(new LatLng(43.121246, -76.181459))
-				.add(new LatLng(43.120714, -76.182832)));
 		/* Full Map */
-		map.addPolyline(new PolylineOptions()
-				.geodesic(true)
-				.color(Color.BLUE)
-				.add(new LatLng(43.043306, -76.150863))//Centro Transit Hub
-				.add(new LatLng(43.042769, -76.150873))//S Warren St & E Adams St
-				.add(new LatLng(43.042740, -76.147542))//E Adams St & S State St
-				.add(new LatLng(43.049514, -76.147401))//S State St & E Washington St
-				.add(new LatLng(43.049545, -76.149324))//E Washington & Montgomery st				
-				.add(new LatLng(43.049574, -76.149753))//E Washington & E Gennese St
-				.add(new LatLng(43.049582, -76.150810))//E Washington & S Warren St
-				.add(new LatLng(43.049590, -76.151498))//E Washington & Bank Alley
-				.add(new LatLng(43.049590, -76.152213))//E Washington & S Salina St
-				.add(new LatLng(43.049619, -76.153586))//W Washington & S Clinton St
-				.add(new LatLng(43.049631, -76.155523))//W Washington & S Franklin St
-				.add(new LatLng(43.050564, -76.155485))//S Franklin St & W Water St
-				.add(new LatLng(43.050897, -76.155478))//S Franklin St & Erie Blvd W
-				.add(new LatLng(43.050971, -76.155474))//Erie Blvd W & N Franklin St
-				.add(new LatLng(43.051316, -76.155465))//N Franklin St;
-				.add(new LatLng(43.051416, -76.155421))//N Franklin St;
-				.add(new LatLng(43.051955, -76.155069))//N Franklin St & W Genessee St
-				.add(new LatLng(43.051967, -76.155064))//W Genessee St & N Franklin St				
-				.add(new LatLng(43.052400, -76.154901))//N Franklin St & W Willow St
-				.add(new LatLng(43.053360, -76.154835))//N Franklin St & Herald PI
-				.add(new LatLng(43.054113, -76.154838))//N Franklin St & 690
-				.add(new LatLng(43.054124, -76.154838))//690 & N Franklin St
-				.add(new LatLng(43.054294, -76.154831))//690 & N Franklin St
-				.add(new LatLng(43.054307, -76.154830))//690 & N Franklin St
-				.add(new LatLng(43.054402, -76.154825))//N Franklin St
-				.add(new LatLng(43.054569, -76.154806))//N Franklin St
-				.add(new LatLng(43.054749, -76.154756))//N Franklin St & Websters Landing
-				.add(new LatLng(43.055034, -76.154493))//Butternut St
-				.add(new LatLng(43.056398, -76.153623))//Butternut St
-				.add(new LatLng(43.056618, -76.153485))//Butternut St
-				.add(new LatLng(43.056859, -76.153339))//Butternut St
-				.add(new LatLng(43.056971, -76.153257))//Butternut St
-				.add(new LatLng(43.057117, -76.153142))//Butternut St
-				.add(new LatLng(43.057194, -76.153049))//Butternut St
-				.add(new LatLng(43.057283, -76.152910))//Butternut St & Salt St
-				.add(new LatLng(43.057376, -76.152794))//Butternut St
-				.add(new LatLng(43.057499, -76.152466))//Butternut St & N State St
-				.add(new LatLng(43.058440, -76.153211))//N State St & I81 Ramp
-				.add(new LatLng(43.058348, -76.153316))//I81 Ramp
-				.add(new LatLng(43.058323, -76.153355))//I81 Ramp
-				.add(new LatLng(43.058307, -76.153388))//I81 Ramp
-				.add(new LatLng(43.058294, -76.153425))//I81 Ramp
-				.add(new LatLng(43.058280, -76.153484))//I81 Ramp
-				.add(new LatLng(43.058279, -76.153545))//I81 Ramp
-				.add(new LatLng(43.058285, -76.153609))//I81 Ramp
-				.add(new LatLng(43.058350, -76.153792))//Ramp
-				.add(new LatLng(43.058470, -76.153966))//Ramp
-				.add(new LatLng(43.058615, -76.154120))//Ramp
-				.add(new LatLng(43.058748, -76.154240))//Merge on to I81
-				.add(new LatLng(43.058762, -76.154265))//Merge on to I81
-				.add(new LatLng(43.058801, -76.154360))//I81
-				
-				
-				
-				
-				.add(new LatLng(43.058810, -76.154370))
-				.add(new LatLng(43.061146, -76.156124))
-				.add(new LatLng(43.062780, -76.158323))
-				.add(new LatLng(43.064352, -76.159691))
-				.add(new LatLng(43.064944, -76.160416))
+		PolylineOptions options = new PolylineOptions();
+		options.geodesic(true);
+		options.color(Color.BLUE);
 
-				.add(new LatLng(43.066382, -76.163715))
-				.add(new LatLng(43.066766, -76.164648))
-				.add(new LatLng(43.066390, -76.163733))
-				.add(new LatLng(43.066586, -76.164203))
-				.add(new LatLng(43.067078, -76.165227))
-				.add(new LatLng(43.067546, -76.165868))
-				.add(new LatLng(43.068788, -76.167207))
-				.add(new LatLng(43.069717, -76.168189))
-				.add(new LatLng(43.070119, -76.168561))
-				.add(new LatLng(43.070804, -76.169066))
-
-				.add(new LatLng(43.072015, -76.169728))
-				.add(new LatLng(43.074670, -76.170946))
-				.add(new LatLng(43.074872, -76.171040))
-				.add(new LatLng(43.075509, -76.171314))
-				.add(new LatLng(43.075934, -76.171500))
-				.add(new LatLng(43.076478, -76.171739))
-				.add(new LatLng(43.076903, -76.171925))
-				.add(new LatLng(43.077608, -76.172213))
-				.add(new LatLng(43.079650, -76.172766))
-				.add(new LatLng(43.081405, -76.172713))
-
-				.add(new LatLng(43.082381, -76.172412))
-				.add(new LatLng(43.084046, -76.171468))
-				.add(new LatLng(43.087173, -76.168861))
-				.add(new LatLng(43.089468, -76.166984))
-				.add(new LatLng(43.089727, -76.166729))
-				.add(new LatLng(43.089784, -76.166573))
-				.add(new LatLng(43.090095, -76.166249))
-				.add(new LatLng(43.090299, -76.165860))
-				.add(new LatLng(43.090350, -76.165592))
-				.add(new LatLng(43.090352, -76.165356))
-
-				.add(new LatLng(43.090315, -76.165138))
-				.add(new LatLng(43.090230, -76.164908))
-				.add(new LatLng(43.090128, -76.164731))
-				.add(new LatLng(43.089819, -76.164478))
-				.add(new LatLng(43.089643, -76.164427))
-				.add(new LatLng(43.089466, -76.164436))
-				.add(new LatLng(43.089298, -76.164500))
-				.add(new LatLng(43.089141, -76.164618))
-				.add(new LatLng(43.088840, -76.164996))
-				.add(new LatLng(43.088795, -76.165205))
-
-				.add(new LatLng(43.088834, -76.165500))
-				.add(new LatLng(43.089668, -76.166766))
-				.add(new LatLng(43.090700, -76.168700))
-				.add(new LatLng(43.090702, -76.168853))
-				.add(new LatLng(43.091895, -76.170849))
-				.add(new LatLng(43.092422, -76.171605))
-				.add(new LatLng(43.093276, -76.171066))
-				.add(new LatLng(43.093327, -76.170975))
-				.add(new LatLng(43.095760, -76.169360))
-				.add(new LatLng(43.096210, -76.169092))
-
-				.add(new LatLng(43.097518, -76.168148))
-				.add(new LatLng(43.100182, -76.166034))
-				.add(new LatLng(43.100981, -76.165305))
-				.add(new LatLng(43.104968, -76.161807))
-				.add(new LatLng(43.106167, -76.160874))
-				.add(new LatLng(43.107275, -76.160444))
-				.add(new LatLng(43.111309, -76.159983))
-				.add(new LatLng(43.113711, -76.159637))
-				.add(new LatLng(43.113770, -76.159645))
-				.add(new LatLng(43.116161, -76.159245))
-
-				.add(new LatLng(43.116966, -76.159122))
-				.add(new LatLng(43.117561, -76.159114))
-				.add(new LatLng(43.119133, -76.159240))
-				.add(new LatLng(43.119695, -76.159275))
-				.add(new LatLng(43.119591, -76.161405))
-				.add(new LatLng(43.119569, -76.162349))
-				.add(new LatLng(43.119681, -76.162400))
-				.add(new LatLng(43.120364, -76.162630))
-				.add(new LatLng(43.120777, -76.162913))
-				.add(new LatLng(43.120986, -76.163112))
-
-				.add(new LatLng(43.121056, -76.163101))
-				.add(new LatLng(43.121337, -76.163202))
-				.add(new LatLng(43.121505, -76.163228))
-				.add(new LatLng(43.121678, -76.163219))
-				.add(new LatLng(43.121735, -76.163228))
-				.add(new LatLng(43.121575, -76.166849))
-				.add(new LatLng(43.125241, -76.167187))
-				.add(new LatLng(43.125696, -76.167448))
-				.add(new LatLng(43.125997, -76.167796))
-				.add(new LatLng(43.126163, -76.168126))
-
-				.add(new LatLng(43.126608, -76.169352))
-				.add(new LatLng(43.126849, -76.169679))
-				.add(new LatLng(43.126962, -76.169770))
-				.add(new LatLng(43.125934, -76.171865))
-				.add(new LatLng(43.125619, -76.172152))
-				.add(new LatLng(43.125764, -76.172504))
-				.add(new LatLng(43.126504, -76.173306))
-				.add(new LatLng(43.126650, -76.173625))
-				.add(new LatLng(43.126664, -76.173751))
-				.add(new LatLng(43.126633, -76.174448))
-
-				.add(new LatLng(43.126594, -76.174582))
-				.add(new LatLng(43.126380, -76.175132))
-				.add(new LatLng(43.126343, -76.175366))
-				.add(new LatLng(43.126468, -76.176031))
-				.add(new LatLng(43.126492, -76.176336))
-				.add(new LatLng(43.126433, -76.176814))
-				.add(new LatLng(43.126310, -76.177211))
-				.add(new LatLng(43.126261, -76.178262))
-				.add(new LatLng(43.126421, -76.178869))
-				.add(new LatLng(43.121864, -76.182238))
-
-				.add(new LatLng(43.121378, -76.182431))
-				.add(new LatLng(43.120955, -76.182431))
-				.add(new LatLng(43.120148, -76.183665))
-				.add(new LatLng(43.119256, -76.184523))
-				.add(new LatLng(43.118802, -76.185221))
-				.add(new LatLng(43.118903, -76.185510))
-				.add(new LatLng(43.129498, -76.186444))
-				.add(new LatLng(43.131323, -76.186626))
-				.add(new LatLng(43.131554, -76.182131))
-				.add(new LatLng(43.131409, -76.186621))
-
-				.add(new LatLng(43.138831, -76.187270))
-				.add(new LatLng(43.141700, -76.187511))
-				.add(new LatLng(43.144037, -76.187683))
-				.add(new LatLng(43.144154, -76.187758))
-				.add(new LatLng(43.146945, -76.187946))
-				.add(new LatLng(43.147062, -76.187914))
-				.add(new LatLng(43.149172, -76.188091))
-				.add(new LatLng(43.149908, -76.190403))
-				.add(new LatLng(43.150710, -76.192666))
-				.add(new LatLng(43.149567, -76.193450))
-
-				.add(new LatLng(43.148784, -76.193417))
+		map.addPolyline(options
+				.add(new LatLng(43.04331, -76.15086))
+				.add(new LatLng(43.04432, -76.15086))
+				.add(new LatLng(43.04433, -76.15222))
+				.add(new LatLng(43.04383, -76.15201))
+				.add(new LatLng(43.04276, -76.15155))
+				.add(new LatLng(43.04277, -76.15087))
+				.add(new LatLng(43.04275, -76.14887))
+				.add(new LatLng(43.04274, -76.14754))
+				.add(new LatLng(43.0436, -76.14753))
+				.add(new LatLng(43.04429, -76.14752))
+				.add(new LatLng(43.0458, -76.1475))
+				.add(new LatLng(43.04753, -76.14748))
+				.add(new LatLng(43.04896, -76.1474))
+				.add(new LatLng(43.04951, -76.14739))
+				.add(new LatLng(43.04954, -76.14933))
+				.add(new LatLng(43.04957, -76.14975))
+				.add(new LatLng(43.04958, -76.15081))
+				.add(new LatLng(43.04959, -76.15221))
+				.add(new LatLng(43.04963, -76.15482))
+				.add(new LatLng(43.04963, -76.15552))
+				.add(new LatLng(43.05013, -76.1555))
+				.add(new LatLng(43.0509, -76.15548))
+				.add(new LatLng(43.05132, -76.15546))
+				.add(new LatLng(43.05141, -76.15542))
+				.add(new LatLng(43.05196, -76.15507))
+				.add(new LatLng(43.0524, -76.1549))
+				.add(new LatLng(43.05299, -76.15486))
+				.add(new LatLng(43.05336, -76.15483))
+				.add(new LatLng(43.05388, -76.15484))
+				.add(new LatLng(43.05425, -76.15483))
+				.add(new LatLng(43.05448, -76.15482))
+				.add(new LatLng(43.05475, -76.15476))
+				.add(new LatLng(43.05503, -76.1545))
+				.add(new LatLng(43.05629, -76.15368))
+				.add(new LatLng(43.05686, -76.15334))
+				.add(new LatLng(43.05711, -76.15314))
+				.add(new LatLng(43.05728, -76.15291))
+				.add(new LatLng(43.05738, -76.15279))
+				.add(new LatLng(43.05754, -76.15292))
+				.add(new LatLng(43.05784, -76.15314))
+				.add(new LatLng(43.05798, -76.15327))
+				.add(new LatLng(43.05808, -76.15338))
+				.add(new LatLng(43.05835, -76.15379))
+				.add(new LatLng(43.05861, -76.15411))
+				.add(new LatLng(43.05874, -76.15424))
+				.add(new LatLng(43.05875, -76.15425))
+				.add(new LatLng(43.0588, -76.15436))
+				.add(new LatLng(43.05951, -76.15485))
+				.add(new LatLng(43.06022, -76.15537))
+				.add(new LatLng(43.06104, -76.15603))
+				.add(new LatLng(43.06118, -76.15617))
+				.add(new LatLng(43.06143, -76.15649))
+				.add(new LatLng(43.06218, -76.15758))
+				.add(new LatLng(43.06261, -76.15813))
+				.add(new LatLng(43.06285, -76.15838))
+				.add(new LatLng(43.06415, -76.1595))
+				.add(new LatLng(43.06457, -76.15992))
+				.add(new LatLng(43.06495, -76.16044))
+				.add(new LatLng(43.06513, -76.16074))
+				.add(new LatLng(43.06537, -76.16121))
+				.add(new LatLng(43.06599, -76.16275))
+				.add(new LatLng(43.0668, -76.16474))
+				.add(new LatLng(43.06698, -76.16509))
+				.add(new LatLng(43.06719, -76.16542))
+				.add(new LatLng(43.06751, -76.16583))
+				.add(new LatLng(43.06875, -76.16716))
+				.add(new LatLng(43.06919, -76.16765))
+				.add(new LatLng(43.06982, -76.16829))
+				.add(new LatLng(43.07012, -76.16856))
+				.add(new LatLng(43.07052, -76.16886))
+				.add(new LatLng(43.07095, -76.16916))
+				.add(new LatLng(43.07131, -76.16937))
+				.add(new LatLng(43.07176, -76.16961))
+				.add(new LatLng(43.07226, -76.16984))
+				.add(new LatLng(43.07321, -76.17029))
+				.add(new LatLng(43.07498, -76.17109))
+				.add(new LatLng(43.07685, -76.17191))
+				.add(new LatLng(43.07812, -76.17242))
+				.add(new LatLng(43.07873, -76.17261))
+				.add(new LatLng(43.07928, -76.17273))
+				.add(new LatLng(43.07972, -76.17279))
+				.add(new LatLng(43.08029, -76.17282))
+				.add(new LatLng(43.08083, -76.17279))
+				.add(new LatLng(43.08138, -76.17271))
+				.add(new LatLng(43.08193, -76.17257))
+				.add(new LatLng(43.08257, -76.17236))
+				.add(new LatLng(43.08299, -76.17216))
+				.add(new LatLng(43.08339, -76.17194))
+				.add(new LatLng(43.08414, -76.17143))
+				.add(new LatLng(43.08553, -76.17028))
+				.add(new LatLng(43.08939, -76.16702))
+				.add(new LatLng(43.08972, -76.16674))
+				.add(new LatLng(43.08975, -76.16665))
+				.add(new LatLng(43.08978, -76.16659))
+				.add(new LatLng(43.08998, -76.16637))
+				.add(new LatLng(43.0902, -76.1661))
+				.add(new LatLng(43.09029, -76.16589))
+				.add(new LatLng(43.09034, -76.16569))
+				.add(new LatLng(43.09035, -76.16535))
+				.add(new LatLng(43.09033, -76.16519))
+				.add(new LatLng(43.09027, -76.165))
+				.add(new LatLng(43.09019, -76.16483))
+				.add(new LatLng(43.0901, -76.1647))
+				.add(new LatLng(43.08996, -76.16456))
+				.add(new LatLng(43.08984, -76.16449))
+				.add(new LatLng(43.08963, -76.16443))
+				.add(new LatLng(43.08944, -76.16444))
+				.add(new LatLng(43.0893, -76.1645))
+				.add(new LatLng(43.08913, -76.16464))
+				.add(new LatLng(43.08885, -76.16498))
+				.add(new LatLng(43.0888, -76.1652))
+				.add(new LatLng(43.08881, -76.16537))
+				.add(new LatLng(43.08884, -76.16554))
+				.add(new LatLng(43.08904, -76.16579))
+				.add(new LatLng(43.0894, -76.16632))
+				.add(new LatLng(43.08967, -76.16677))
+				.add(new LatLng(43.08997, -76.16731))
+				.add(new LatLng(43.0907, -76.16871))
+				.add(new LatLng(43.0907, -76.16885))
+				.add(new LatLng(43.09113, -76.16964))
+				.add(new LatLng(43.09201, -76.17102))
+				.add(new LatLng(43.09241, -76.17161))
+				.add(new LatLng(43.09282, -76.17136))
+				.add(new LatLng(43.09326, -76.17109))
+				.add(new LatLng(43.0933, -76.17101))
+				.add(new LatLng(43.09408, -76.17053))
+				.add(new LatLng(43.09446, -76.17029))
+				.add(new LatLng(43.09495, -76.16995))
+				.add(new LatLng(43.09588, -76.16926))
+				.add(new LatLng(43.09604, -76.16916))
+				.add(new LatLng(43.09618, -76.16911))
+				.add(new LatLng(43.09714, -76.16841))
+				.add(new LatLng(43.09959, -76.16653))
+				.add(new LatLng(43.10045, -76.16582))
+				.add(new LatLng(43.10122, -76.16511))
+				.add(new LatLng(43.10287, -76.16356))
+				.add(new LatLng(43.10564, -76.16126))
+				.add(new LatLng(43.10604, -76.16097))
+				.add(new LatLng(43.10647, -76.16073))
+				.add(new LatLng(43.10684, -76.16057))
+				.add(new LatLng(43.10727, -76.16045))
+				.add(new LatLng(43.10928, -76.16022))
+				.add(new LatLng(43.11118, -76.16003))
+				.add(new LatLng(43.11127, -76.15999))
+				.add(new LatLng(43.11161, -76.15996))
+				.add(new LatLng(43.11227, -76.15988))
+				.add(new LatLng(43.11297, -76.15977))
+				.add(new LatLng(43.11344, -76.15969))
+				.add(new LatLng(43.11371, -76.15964))
+				.add(new LatLng(43.11376, -76.15966))
+				.add(new LatLng(43.11392, -76.15963))
+				.add(new LatLng(43.11496, -76.15945))
+				.add(new LatLng(43.11689, -76.15913))
+				.add(new LatLng(43.11717, -76.1591))
+				.add(new LatLng(43.11746, -76.1591))
+				.add(new LatLng(43.11786, -76.15914))
+				.add(new LatLng(43.11905, -76.15926))
+				.add(new LatLng(43.11905, -76.15926))
+				.add(new LatLng(43.11918, -76.15931))
+				.add(new LatLng(43.1197, -76.15938))
+				.add(new LatLng(43.11959, -76.16142))
+				// Hospital
+				.add(new LatLng(43.11959, -76.16142))
+				.add(new LatLng(43.11955, -76.16215))
+				.add(new LatLng(43.11956, -76.16233))
+				.add(new LatLng(43.11959, -76.16238))
+				.add(new LatLng(43.11983, -76.16242))
+				.add(new LatLng(43.12012, -76.1625))
+				.add(new LatLng(43.12035, -76.16263))
+				.add(new LatLng(43.12078, -76.16292))
+				.add(new LatLng(43.12099, -76.16311))
+				.add(new LatLng(43.12106, -76.1631))
+				.add(new LatLng(43.12133, -76.1632))
+				.add(new LatLng(43.1215, -76.16323))
+				.add(new LatLng(43.12173, -76.16323))
+				.add(new LatLng(43.12157, -76.16685))
+		// WestTaft & cedarPost
 
 		);
+
+		if (taftRoute) {
+			options
+
+			.add(new LatLng(43.12157, -76.16685))
+					.add(new LatLng(43.12431, -76.16708))
+					.add(new LatLng(43.12522, -76.16718))
+					.add(new LatLng(43.1254, -76.16724))
+					.add(new LatLng(43.12555, -76.16734))
+					.add(new LatLng(43.12579, -76.16753))
+					.add(new LatLng(43.12604, -76.16786))
+					.add(new LatLng(43.1263, -76.16848))
+					.add(new LatLng(43.1266, -76.16935))
+					.add(new LatLng(43.12666, -76.16946))
+					.add(new LatLng(43.12688, -76.16972))
+					.add(new LatLng(43.12696, -76.16978))
+					.add(new LatLng(43.12681, -76.17014))
+					.add(new LatLng(43.12651, -76.17074))
+					.add(new LatLng(43.12627, -76.17123))
+					.add(new LatLng(43.12601, -76.17176))
+					.add(new LatLng(43.12589, -76.17193))
+					.add(new LatLng(43.12577, -76.17205))
+					.add(new LatLng(43.12561, -76.17216))
+					.add(new LatLng(43.12573, -76.17244))
+					.add(new LatLng(43.12577, -76.1725))
+					.add(new LatLng(43.12636, -76.17314))
+					.add(new LatLng(43.1265, -76.17331))
+					.add(new LatLng(43.12659, -76.17346))
+					.add(new LatLng(43.12667, -76.17373))
+					.add(new LatLng(43.12666, -76.17423))
+					.add(new LatLng(43.12659, -76.17458))
+					.add(new LatLng(43.12645, -76.17488))
+					.add(new LatLng(43.12638, -76.17514))
+					.add(new LatLng(43.12634, -76.17537))
+					.add(new LatLng(43.12635, -76.17556))
+					.add(new LatLng(43.12647, -76.17605))
+					.add(new LatLng(43.12648, -76.17652))
+					.add(new LatLng(43.12644, -76.1768))
+					.add(new LatLng(43.12633, -76.17713))
+					.add(new LatLng(43.12628, -76.17758))
+					.add(new LatLng(43.12626, -76.17825))
+					.add(new LatLng(43.12628, -76.17846))
+					.add(new LatLng(43.12639, -76.17882))
+					.add(new LatLng(43.12642, -76.1789))
+					.add(new LatLng(43.1257, -76.17942))
+					.add(new LatLng(43.12356, -76.18098))
+					.add(new LatLng(43.12239, -76.18184))
+					.add(new LatLng(43.12177, -76.18227))
+					.add(new LatLng(43.12162, -76.18234))
+					.add(new LatLng(43.12143, -76.1824))
+					.add(new LatLng(43.12108, -76.18244))
+					.add(new LatLng(43.12097, -76.18241));
+			// Bear Rd & W.Taft
+
+		} else {
+			options
+			// Without cedarPost in W Taft
+			.add(new LatLng(43.12157, -76.16685))
+					.add(new LatLng(43.12156, -76.16708))
+					.add(new LatLng(43.12159, -76.16725))
+					.add(new LatLng(43.12154, -76.16898))
+					.add(new LatLng(43.12142, -76.17123))
+					.add(new LatLng(43.12138, -76.17133))
+					.add(new LatLng(43.12137, -76.17246))
+					.add(new LatLng(43.12131, -76.17679))
+					.add(new LatLng(43.12129, -76.17899))
+					.add(new LatLng(43.12128, -76.17954))
+					.add(new LatLng(43.12132, -76.17969))
+					.add(new LatLng(43.12132, -76.17978))
+					.add(new LatLng(43.12131, -76.18068))
+					.add(new LatLng(43.12129, -76.18112))
+					.add(new LatLng(43.12124, -76.18144))
+					.add(new LatLng(43.12109, -76.18209))
+					.add(new LatLng(43.12097, -76.18241));
+			// Bear Rd & W.Taft
+
+		}
+
+		options.add(new LatLng(43.12097, -76.18241))
+				.add(new LatLng(43.12072, -76.18292))
+				.add(new LatLng(43.12053, -76.18322))
+				.add(new LatLng(43.12034, -76.18344))
+				.add(new LatLng(43.11998, -76.1838))
+				.add(new LatLng(43.11961, -76.18412))
+				.add(new LatLng(43.11924, -76.18453))
+				.add(new LatLng(43.11895, -76.18493))
+				.add(new LatLng(43.11878, -76.1852))
+				.add(new LatLng(43.11881, -76.18532))
+				.add(new LatLng(43.11882, -76.18538))
+				.add(new LatLng(43.11889, -76.18552))
+				.add(new LatLng(43.12106, -76.18573))
+				.add(new LatLng(43.12459, -76.18605))
+				.add(new LatLng(43.13059, -76.18656))
+				.add(new LatLng(43.13137, -76.18663))
+				.add(new LatLng(43.13137, -76.18655))
+				.add(new LatLng(43.13143, -76.1851))
+				.add(new LatLng(43.1315, -76.18346))
+				.add(new LatLng(43.13157, -76.18213))
+				.add(new LatLng(43.13157, -76.18208));
+		// Norstar Apts
+		// Direct to Moltlage
+
+		if (stoneDaleRoute) {
+			options
+			// With Stonedale
+			.add(new LatLng(43.13157, -76.18208))
+					.add(new LatLng(43.13144, -76.18483))
+					.add(new LatLng(43.13137, -76.18663))
+					.add(new LatLng(43.13398, -76.18685))
+					.add(new LatLng(43.13842, -76.18724))
+					.add(new LatLng(43.14102, -76.18746))
+					.add(new LatLng(43.14393, -76.18768))
+					.add(new LatLng(43.14406, -76.1877))
+					.add(new LatLng(43.14413, -76.18776))
+					.add(new LatLng(43.1442, -76.18776))
+					.add(new LatLng(43.14573, -76.18788))
+					.add(new LatLng(43.14689, -76.18797))
+					.add(new LatLng(43.14702, -76.18791))
+					.add(new LatLng(43.14705, -76.18706))
+					.add(new LatLng(43.14717, -76.184))
+					.add(new LatLng(43.14727, -76.18349))
+					.add(new LatLng(43.14735, -76.18329))
+					.add(new LatLng(43.14662, -76.18287))
+					.add(new LatLng(43.14572, -76.18234))
+					.add(new LatLng(43.14591, -76.18182))
+					.add(new LatLng(43.1461, -76.18149))
+					.add(new LatLng(43.14622, -76.18109))
+					.add(new LatLng(43.14639, -76.18037))
+					.add(new LatLng(43.14644, -76.18024))
+					.add(new LatLng(43.14651, -76.18016))
+					.add(new LatLng(43.14659, -76.18011))
+					.add(new LatLng(43.14668, -76.1801))
+					.add(new LatLng(43.14848, -76.18027))
+					.add(new LatLng(43.14869, -76.18033))
+					.add(new LatLng(43.14902, -76.18051))
+					.add(new LatLng(43.14911, -76.18054))
+					.add(new LatLng(43.14946, -76.18058))
+					.add(new LatLng(43.14936, -76.18261))
+					.add(new LatLng(43.14921, -76.18555))
+					.add(new LatLng(43.14917, -76.18671))
+					.add(new LatLng(43.14915, -76.18749))
+					.add(new LatLng(43.1492, -76.18809))
+					.add(new LatLng(43.14932, -76.18868))
+					.add(new LatLng(43.1496, -76.1895))
+					.add(new LatLng(43.1499, -76.19038))
+					.add(new LatLng(43.14992, -76.19049))
+					.add(new LatLng(43.15071, -76.19267))
+					.add(new LatLng(43.14966, -76.19339))
+					.add(new LatLng(43.14956, -76.19345))
+					.add(new LatLng(43.14944, -76.19347))
+					.add(new LatLng(43.14876, -76.19342));
+		} else {
+			options.add(new LatLng(43.13157, -76.18208))
+					.add(new LatLng(43.13144, -76.18483))
+					.add(new LatLng(43.13137, -76.18663))
+					.add(new LatLng(43.13398, -76.18685))
+					.add(new LatLng(43.13842, -76.18724))
+					.add(new LatLng(43.14102, -76.18746))
+					.add(new LatLng(43.14393, -76.18768))
+					.add(new LatLng(43.14406, -76.1877))
+					.add(new LatLng(43.14413, -76.18776))
+					.add(new LatLng(43.1442, -76.18776))
+					.add(new LatLng(43.14573, -76.18788))
+					.add(new LatLng(43.14689, -76.18797))
+					.add(new LatLng(43.14702, -76.18791))
+					.add(new LatLng(43.1477, -76.18797))
+					.add(new LatLng(43.14911, -76.18808))
+					.add(new LatLng(43.1492, -76.18809))
+					.add(new LatLng(43.14922, -76.18823))
+					.add(new LatLng(43.14928, -76.18855))
+					.add(new LatLng(43.14937, -76.18885))
+					.add(new LatLng(43.14953, -76.1893))
+					.add(new LatLng(43.14985, -76.19025))
+					.add(new LatLng(43.14991, -76.19042))
+					.add(new LatLng(43.15026, -76.19143))
+					.add(new LatLng(43.15071, -76.19267))
+					.add(new LatLng(43.15013, -76.19305))
+					.add(new LatLng(43.14956, -76.19345))
+					.add(new LatLng(43.14944, -76.19347))
+					.add(new LatLng(43.14919, -76.19346))
+					.add(new LatLng(43.14876, -76.19342))
+			/*
+			 * // Wetzel & Moltlage
+			 */;
+		}
+		
+		map.addPolyline(options);	
 
 	}
 
@@ -363,3 +740,4 @@ public class MainActivity extends Activity {
 	}
 
 }
+
