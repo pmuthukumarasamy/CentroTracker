@@ -37,6 +37,9 @@ import com.palani.dataModel.Bus;
 
 public class MainActivity extends Activity {
 
+	private static final Logger LOGGER = Logger.getLogger("Centro Tracker"
+			+ MainActivity.class.getName());
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -114,7 +117,7 @@ public class MainActivity extends Activity {
 		}
 
 		a.setSchedules(stopTime);
-		busStop.put(new LatLng(43.13137998595569, -76.18519697338343), a);
+		busStop.put(new LatLng(43.13137, -76.18511), a);
 
 		Bus b = new Bus();
 		b.setName("Stonedale Dr & New Hope East");
@@ -134,7 +137,7 @@ public class MainActivity extends Activity {
 		}
 		b.setSchedules(stopTime);
 		if (stoneDaleRoute)
-			busStop.put(new LatLng(43.14736311717888, -76.18372812867165), b);
+			busStop.put(new LatLng(43.14736, -76.18372), b);
 
 		Bus c = new Bus();
 		c.setName("Maltlage & Wetzel");
@@ -155,7 +158,7 @@ public class MainActivity extends Activity {
 
 		}
 		c.setSchedules(stopTime);
-		busStop.put(new LatLng(43.148784078054895, -76.19341693818569), c);
+		busStop.put(new LatLng(43.14878, -76.19342), c);
 
 		Bus d = new Bus();
 		d.setName("Merril Farms (Harvest & Cedarpost)");
@@ -170,7 +173,7 @@ public class MainActivity extends Activity {
 		}
 		d.setSchedules(stopTime);
 		if (taftRoute)
-			busStop.put(new LatLng(43.126855921306564, -76.1699640378356), d);
+			busStop.put(new LatLng(43.12685, -76.16996), d);
 
 		Bus e = new Bus();
 		e.setName("North Medical Center");
@@ -191,7 +194,7 @@ public class MainActivity extends Activity {
 
 		}
 		e.setSchedules(stopTime);
-		busStop.put(new LatLng(43.11959087862927, -76.16140712052584), e);
+		busStop.put(new LatLng(43.11959, -76.16141), e);
 
 		Bus f = new Bus();
 		f.setName("7th North & Buckley Rd");
@@ -212,7 +215,7 @@ public class MainActivity extends Activity {
 
 		}
 		f.setSchedules(stopTime);
-		busStop.put(new LatLng(43.09338595251225, -76.1710711196065), f);
+		busStop.put(new LatLng(43.09338, -76.17107), f);
 
 		Bus g = new Bus();
 		g.setName("Washington & Franklin St");
@@ -233,7 +236,7 @@ public class MainActivity extends Activity {
 
 		}
 		g.setSchedules(stopTime);
-		busStop.put(new LatLng(43.04963102114678, -76.15551698952913), g);
+		busStop.put(new LatLng(43.04963, -76.15552), g);
 		Bus h = new Bus();
 		h.setName("S State & Madison St");
 		stopTime = new ArrayList<Date>();
@@ -253,7 +256,7 @@ public class MainActivity extends Activity {
 
 		}
 		h.setSchedules(stopTime);
-		busStop.put(new LatLng(43.045474086856096, -76.14750389009714), h);
+		busStop.put(new LatLng(43.04547, -76.14750), h);
 
 		Bus i = new Bus();
 		i.setName("Salina & Adams St");
@@ -274,7 +277,7 @@ public class MainActivity extends Activity {
 
 		}
 		i.setSchedules(istopTime);
-		busStop.put(new LatLng(43.04330607725828, -76.15086302161217), i);
+		busStop.put(new LatLng(43.04331, -76.15086), i);
 
 		Iterator<Entry<LatLng, Bus>> iterator = busStop.entrySet().iterator();
 
@@ -313,7 +316,16 @@ public class MainActivity extends Activity {
 
 					String name = "";
 					String t = "";
-					Bus bus = localStop.get(marker.getPosition());
+					
+					LatLng position = marker.getPosition();
+					double latitude = Math.round(position.latitude*100000.0)/100000.0;
+					double longitude = Math.round(position.longitude*100000.0)/100000.0;
+					
+					LatLng roundedPosition = new LatLng(latitude,longitude);
+					
+					
+					Bus bus = localStop.get(roundedPosition);					
+					
 					if (bus != null) {
 						name += "Stop Name : \t" + bus.getName();
 
@@ -343,9 +355,7 @@ public class MainActivity extends Activity {
 					lon.setText(info);
 
 				} catch (Exception ex) {
-					Logger.getLogger(MainActivity.class.getName()).log(
-							Level.SEVERE,
-							"Error Occured during setting of Text Field", ex);
+					LOGGER.log(Level.SEVERE,"Exception Occured",ex);
 				}
 				return infoWindow;
 			}
@@ -354,7 +364,7 @@ public class MainActivity extends Activity {
 		map.addMarker(new MarkerOptions()
 				.icon(BitmapDescriptorFactory.fromResource(R.drawable.centro))
 				.anchor(0.0f, 1.0f).title("Centro Transit Hub")
-				.position(new LatLng(43.04320438867024, -76.15116510540247)));
+				.position(new LatLng(43.04320, -76.15116)));
 
 		/* Full Map */
 		PolylineOptions options = new PolylineOptions();
@@ -726,8 +736,8 @@ public class MainActivity extends Activity {
 			 * // Wetzel & Moltlage
 			 */;
 		}
-		
-		map.addPolyline(options);	
+
+		map.addPolyline(options);
 
 	}
 
@@ -737,6 +747,79 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+	
+	/**
+     * Decodes an encoded path string into a sequence of LatLngs.
+     */
+    public static List<LatLng> decode(final String encodedPath) {
+        int len = encodedPath.length();
+
+        // For speed we preallocate to an upper bound on the final length, then
+        // truncate the array before returning.
+        final List<LatLng> path = new ArrayList<LatLng>();
+        int index = 0;
+        int lat = 0;
+        int lng = 0;
+
+        while (index < len) {
+            int result = 1;
+            int shift = 0;
+            int b;
+            do {
+                b = encodedPath.charAt(index++) - 63 - 1;
+                result += b << shift;
+                shift += 5;
+            } while (b >= 0x1f);
+            lat += (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+
+            result = 1;
+            shift = 0;
+            do {
+                b = encodedPath.charAt(index++) - 63 - 1;
+                result += b << shift;
+                shift += 5;
+            } while (b >= 0x1f);
+            lng += (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+
+            path.add(new LatLng(lat * 1e-5, lng * 1e-5));
+        }
+
+        return path;
+    }
+
+    /**
+     * Encodes a sequence of LatLngs into an encoded path string.
+     */
+    public static String encode(final List<LatLng> path) {
+        long lastLat = 0;
+        long lastLng = 0;
+
+        final StringBuffer result = new StringBuffer();
+
+        for (final LatLng point : path) {
+            long lat = Math.round(point.latitude * 1e5);
+            long lng = Math.round(point.longitude * 1e5);
+
+            long dLat = lat - lastLat;
+            long dLng = lng - lastLng;
+
+            encode(dLat, result);
+            encode(dLng, result);
+
+            lastLat = lat;
+            lastLng = lng;
+        }
+        return result.toString();
+    }
+
+    private static void encode(long v, StringBuffer result) {
+        v = v < 0 ? ~(v << 1) : v << 1;
+        while (v >= 0x20) {
+            result.append(Character.toChars((int) ((0x20 | (v & 0x1f)) + 63)));
+            v >>= 5;
+        }
+        result.append(Character.toChars((int) (v + 63)));
+    }
 
 }
-
