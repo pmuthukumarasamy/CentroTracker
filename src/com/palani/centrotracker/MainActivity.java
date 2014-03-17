@@ -752,22 +752,14 @@ public class MainActivity extends Activity {
 
 		dbh.getWritableDatabase().beginTransaction();
 		try{
-			String sql = "INSERT INTO ROUTE (id,routenumber,direction,map) values (1,286,'From Downtown To HenryClay','"+Utility.encode(options.getPoints())+"');";
-			
 			String select = "SELECT * FROM ROUTE;";
 			
-			Route R = new Route();
-			
-			LOGGER.log(Level.SEVERE,"TRYING "+sql);
-			
-			dbh.getWritableDatabase().execSQL(sql);
-			
+			Route R = new Route();			
+				
 			Cursor cursor = dbh.getReadableDatabase().rawQuery(select, null);
 			
 			cursor.moveToFirst();
-			do{
-				LOGGER.log(Level.SEVERE,Arrays.toString(cursor.getColumnNames())+"Columns");
-				
+			do{					
 				R.setId(cursor.getInt(0));
 				R.setRouteNumber(cursor.getInt(1));
 				R.setDirection(cursor.getString(2));
