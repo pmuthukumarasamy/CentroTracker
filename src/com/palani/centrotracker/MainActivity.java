@@ -3,7 +3,6 @@ package com.palani.centrotracker;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,9 +35,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.palani.centrotracker.database.DatabaseHelper;
-import com.palani.centrotracker.util.Utility;
 import com.palani.dataModel.Bus;
-import com.palani.dataModel.Route;
 
 public class MainActivity extends Activity {
 
@@ -52,6 +49,7 @@ public class MainActivity extends Activity {
 
 		DatabaseHelper dbh = new DatabaseHelper(this);
 		LOGGER.log(Level.SEVERE,dbh.getWritableDatabase().getPath());
+		
 		// Get a handle to the Map Fragment
 		final GoogleMap map = ((MapFragment) getFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
@@ -747,41 +745,13 @@ public class MainActivity extends Activity {
 		}
 
 		map.addPolyline(options);
+	
 		
-		LOGGER.log(Level.SEVERE,options.getPoints().size()+"initial Points");
-
-		dbh.getWritableDatabase().beginTransaction();
-		try{
-			String select = "SELECT * FROM ROUTE;";
-			
-			Route R = new Route();			
-				
-			Cursor cursor = dbh.getReadableDatabase().rawQuery(select, null);
-			
-			cursor.moveToFirst();
-			do{					
-				R.setId(cursor.getInt(0));
-				R.setRouteNumber(cursor.getInt(1));
-				R.setDirection(cursor.getString(2));
-				R.setEncodedMap(cursor.getString(3));
-				
-			}while(cursor.moveToNext());
-			LOGGER.log(Level.SEVERE,cursor.getCount()+"results");
-			
-			List<LatLng> n = Utility.decode(R.getEncodedMap());
-			LOGGER.log(Level.SEVERE,n.size()+"points");
-			
-			dbh.getWritableDatabase().endTransaction();
-		dbh.close();
-		}catch(Exception ex){
-			LOGGER.log(Level.SEVERE,ex.getMessage());
-		}
 		
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+	public boolean onCreateOptionsMenu(Menu menu) {		
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}

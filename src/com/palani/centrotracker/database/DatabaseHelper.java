@@ -3,14 +3,15 @@ package com.palani.centrotracker.database;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.palani.centrotracker.maputil.MapUtil;
-import com.palani.centrotracker.util.Utility;
-
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.palani.centrotracker.maputil.MapUtil;
+import com.palani.centrotracker.util.Utility;
 
 public class DatabaseHelper extends SQLiteOpenHelper implements
 		DatabaseChangeListener {
@@ -21,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements
 
 	public DatabaseHelper(Context context) {
 		super(context, DBNAME, null, VERSION);
-		logger.log(Level.SEVERE, "Database Name =" + DBNAME + "Version ="
+		logger.log(Level.SEVERE, "Database Name =" + DBNAME + " Version = "
 				+ VERSION);
 	}
 
@@ -36,6 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements
 		try {
 			logger.log(Level.SEVERE, "Creating Database");
 
+			db.beginTransaction();
 			db.execSQL("CREATE TABLE IF NOT EXISTS ROUTE (ID INTEGER PRIMARY KEY NOT NULL,ROUTENUMBER INTEGER NOT NULL,DIRECTION TEXT,ENCODEDMAP TEXT);");
 			
 			ContentValues values = new ContentValues();
@@ -44,9 +46,17 @@ public class DatabaseHelper extends SQLiteOpenHelper implements
 			values.put("direction", "From Downtown To HenryClay");
 			values.put("encodedmap", Utility.encode(MapUtil.DownTownToHenryClay()));
 			
+			logger.log(Level.SEVERE,"Inserting record");
 			db.insert("ROUTE", null, values);
-
+			
+			Cursor c = db.rawQuery("SELECT * FROM ROUTE;", null);
+			
+			logger.log(Level.SEVERE,c.getCount()+"number of rows returned");
+			
 			logger.log(Level.SEVERE, "Creating Database");
+			
+			db.endTransaction();
+			db.close();
 		} catch (Exception dbException) {
 			logger.log(Level.SEVERE,
 					"Exception occured during database creation");
