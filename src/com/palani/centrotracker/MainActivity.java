@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.palani.centrotracker.database.DatabaseHelper;
 import com.palani.centrotracker.util.Utility;
 import com.palani.dataModel.Bus;
+import com.palani.dataModel.Route;
 
 public class MainActivity extends Activity {
 
@@ -746,6 +747,8 @@ public class MainActivity extends Activity {
 		}
 
 		map.addPolyline(options);
+		
+		LOGGER.log(Level.SEVERE,options.getPoints().size()+"initial Points");
 
 		dbh.getWritableDatabase().beginTransaction();
 		try{
@@ -753,7 +756,7 @@ public class MainActivity extends Activity {
 			
 			String select = "SELECT * FROM ROUTE;";
 			
-			
+			Route R = new Route();
 			
 			LOGGER.log(Level.SEVERE,"TRYING "+sql);
 			
@@ -764,8 +767,17 @@ public class MainActivity extends Activity {
 			cursor.moveToFirst();
 			do{
 				LOGGER.log(Level.SEVERE,Arrays.toString(cursor.getColumnNames())+"Columns");
+				
+				R.setId(cursor.getInt(0));
+				R.setRouteNumber(cursor.getInt(1));
+				R.setDirection(cursor.getString(2));
+				R.setEncodedMap(cursor.getString(3));
+				
 			}while(cursor.moveToNext());
 			LOGGER.log(Level.SEVERE,cursor.getCount()+"results");
+			
+			List<LatLng> n = Utility.decode(R.getEncodedMap());
+			LOGGER.log(Level.SEVERE,n.size()+"points");
 			
 			dbh.getWritableDatabase().endTransaction();
 		dbh.close();
