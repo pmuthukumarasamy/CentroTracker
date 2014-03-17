@@ -12,18 +12,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.palani.centrotracker.database.DatabaseHelper;
+import com.palani.centrotracker.util.Utility;
 import com.palani.dataModel.Bus;
 
 public class MainActivity extends Activity {
@@ -42,6 +43,7 @@ public class MainActivity extends Activity {
 	private static final Logger LOGGER = Logger.getLogger("Centro Tracker"
 			+ MainActivity.class.getName());
 
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -378,7 +380,7 @@ public class MainActivity extends Activity {
 		options.geodesic(true);
 		options.color(Color.BLUE);
 
-		map.addPolyline(options
+		/*map.addPolyline(options
 				.add(new LatLng(43.04331, -76.15086))
 				.add(new LatLng(43.04432, -76.15086))
 				.add(new LatLng(43.04433, -76.15222))
@@ -742,12 +744,29 @@ public class MainActivity extends Activity {
 			
 			  // Wetzel & Moltlage
 			 ;
-		}
+		}*/
 
-		map.addPolyline(options);
+		try{
+			
+			
+			Cursor cur;
+			LOGGER.log(Level.INFO,"DATABASE NAME = "+dbh.getDatabaseName());
+			
+			cur = dbh.getReadableDatabase().query("route", null, null, null, null, null, null);
+			LOGGER.log(Level.SEVERE,cur.getCount()+" rows returned  ");
+			
+			cur.moveToFirst();
+			do{
+				String encodedMap = cur.getString(3);
+				List<LatLng> points  = Utility.decode(encodedMap);
+				options.addAll(points);
+			}while(cur.moveToNext());
+		}catch(Exception ex){
+			LOGGER.log(Level.SEVERE,"Exception occured while trying to fetch from database",ex);
+		}
 	
 		
-		
+		map.addPolyline(options);
 	}
 
 	@Override

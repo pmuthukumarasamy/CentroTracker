@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -38,25 +37,20 @@ public class DatabaseHelper extends SQLiteOpenHelper implements
 			logger.log(Level.SEVERE, "Creating Database");
 
 			db.beginTransaction();
-			db.execSQL("CREATE TABLE IF NOT EXISTS ROUTE (ID INTEGER PRIMARY KEY NOT NULL,ROUTENUMBER INTEGER NOT NULL,DIRECTION TEXT,ENCODEDMAP TEXT);");
+			db.execSQL("DROP TABLE IF EXISTS ROUTE;");
+			db.execSQL("CREATE TABLE IF NOT EXISTS ROUTE (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,ROUTENUMBER INTEGER NOT NULL,DIRECTION TEXT,ENCODEDMAP TEXT);");
 			
-			ContentValues values = new ContentValues();
-			values.put("id", 1);
-			values.put("routenumber",86);
+			ContentValues values = new ContentValues();		
+			values.put("routenumber",286);
 			values.put("direction", "From Downtown To HenryClay");
 			values.put("encodedmap", Utility.encode(MapUtil.DownTownToHenryClay()));
 			
 			logger.log(Level.SEVERE,"Inserting record");
-			db.insert("ROUTE", null, values);
+			db.insert("ROUTE", null, values);	
+			logger.log(Level.SEVERE,db.rawQuery("SELECT * FROM ROUTE;",null).getCount()+" results added.");
 			
-			Cursor c = db.rawQuery("SELECT * FROM ROUTE;", null);
 			
-			logger.log(Level.SEVERE,c.getCount()+"number of rows returned");
 			
-			logger.log(Level.SEVERE, "Creating Database");
-			
-			db.endTransaction();
-			db.close();
 		} catch (Exception dbException) {
 			logger.log(Level.SEVERE,
 					"Exception occured during database creation");
@@ -67,7 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
+	        
 
 	}
 
@@ -76,6 +70,10 @@ public class DatabaseHelper extends SQLiteOpenHelper implements
 		// TODO Auto-generated method stub
 
 	}
+	
+	
+	
+	
 
 	@Override
 	public void onTableRowChanged(String tableName, long rowId) {
