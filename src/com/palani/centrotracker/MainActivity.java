@@ -374,7 +374,7 @@ public class MainActivity extends Activity {
 				.anchor(0.0f, 1.0f).title("Centro Transit Hub")
 				.position(new LatLng(43.04320, -76.15116)));
 
-//		 Full Map 
+
 		PolylineOptions options = new PolylineOptions();
 		options.geodesic(true);
 		options.color(Color.BLUE);	
@@ -393,12 +393,12 @@ public class MainActivity extends Activity {
 			else
 				routeNumber ="286";
 			
-			cur = dbh.getReadableDatabase().query("route", null, "routenumber=?", new String[]{routeNumber}, null, null, null);
+			cur = dbh.getReadableDatabase().query("route", new String[]{"encodedmap"}, "routenumber=?", new String[]{routeNumber}, null, null, null);
 			logger.log(Level.INFO,cur.getCount()+" rows returned  ");
 			
 			cur.moveToFirst();
 			do{
-				String encodedMap = cur.getString(3);
+				String encodedMap = cur.getString(0);
 				List<LatLng> points  = Utility.decode(encodedMap);
 				options.addAll(points);
 			}while(cur.moveToNext());
