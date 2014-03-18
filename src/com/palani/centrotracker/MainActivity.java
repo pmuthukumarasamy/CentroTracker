@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
 		
 		
 		map.setBuildingsEnabled(true);
-		map.setMyLocationEnabled(true);
+//		map.setMyLocationEnabled(true);
 		
 		UiSettings uiSettings = map.getUiSettings();
 		uiSettings.setMyLocationButtonEnabled(true);
@@ -385,8 +385,16 @@ public class MainActivity extends Activity {
 			Cursor cur;
 			logger.log(Level.INFO,"DATABASE NAME = "+dbh.getDatabaseName());
 			
-			cur = dbh.getReadableDatabase().query("route", null, null, null, null, null, null);
-			logger.log(Level.SEVERE,cur.getCount()+" rows returned  ");
+			String routeNumber;
+			if(taftRoute)
+				routeNumber = "186B";
+			else if(stoneDaleRoute)
+				routeNumber = "186A";
+			else
+				routeNumber ="286";
+			
+			cur = dbh.getReadableDatabase().query("route", null, "routenumber=?", new String[]{routeNumber}, null, null, null);
+			logger.log(Level.INFO,cur.getCount()+" rows returned  ");
 			
 			cur.moveToFirst();
 			do{

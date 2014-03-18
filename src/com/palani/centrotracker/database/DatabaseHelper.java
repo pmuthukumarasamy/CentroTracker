@@ -34,15 +34,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.beginTransaction();
 			logger.log(Level.INFO,"Beginning Transaction");
 			db.execSQL("DROP TABLE IF EXISTS ROUTE;");
-			db.execSQL("CREATE TABLE IF NOT EXISTS ROUTE (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,ROUTENUMBER INTEGER NOT NULL,DIRECTION TEXT,ENCODEDMAP TEXT);");
+			db.execSQL("CREATE TABLE IF NOT EXISTS ROUTE (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,ROUTENUMBER VARCHAR NOT NULL,DIRECTION TEXT,ENCODEDMAP TEXT);");
 			
 			ContentValues values = new ContentValues();		
-			values.put("routenumber",286);
+			values.put("routenumber","286");
 			values.put("direction", "OUTBOUND");
-			values.put("encodedmap", Utility.encode(MapUtil.DownTownToHenryClay()));			
+			values.put("encodedmap", Utility.encode(MapUtil.route286OutBound()));			
 			logger.log(Level.INFO,"Inserting record");
 			db.insert("ROUTE", null, values);		
 			
+			values = new ContentValues();
+			values.put("routenumber", "186A");
+			values.put("direction", "OUTBOUND");
+			values.put("encodedMap", Utility.encode(MapUtil.route186AOutBound()));
+			db.insert("ROUTE", null, values);
+			
+			
+			values = new ContentValues();
+			values.put("routenumber","186B");
+			values.put("direction","OUTBOUND");
+			values.put("encodedMap",Utility.encode(MapUtil.route186BOutBound()));
+			db.insert("ROUTE", null, values);
 			
 			logger.log(Level.INFO,db.rawQuery("SELECT * FROM ROUTE;",null).getCount()+" records added.");
 			
