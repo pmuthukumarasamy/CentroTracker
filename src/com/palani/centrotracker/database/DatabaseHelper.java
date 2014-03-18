@@ -19,8 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public DatabaseHelper(Context context) {
 		super(context, DBNAME, null, VERSION);
-		logger.log(Level.SEVERE, "Database Name =" + DBNAME + " Version = "
-				+ VERSION);
+		logger.log(Level.INFO, "Database Name = {0} Version = {1}",new Object[]{DBNAME,VERSION});
 	}
 
 	public DatabaseHelper(Context context, String name, CursorFactory factory,
@@ -42,9 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put("direction", "OUTBOUND");
 			values.put("encodedmap", Utility.encode(MapUtil.DownTownToHenryClay()));			
 			logger.log(Level.INFO,"Inserting record");
-			db.insert("ROUTE", null, values);	
-			
-			
+			db.insert("ROUTE", null, values);		
 			
 			
 			logger.log(Level.INFO,db.rawQuery("SELECT * FROM ROUTE;",null).getCount()+" records added.");

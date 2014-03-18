@@ -5,13 +5,13 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/lat"
+        android:id="@+id/stopInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
        />
     <TextView
-        android:id="@+id/lon"
+        android:id="@+id/scheduleInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
        />
