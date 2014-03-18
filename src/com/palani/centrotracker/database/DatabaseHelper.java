@@ -12,12 +12,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.palani.centrotracker.maputil.MapUtil;
 import com.palani.centrotracker.util.Utility;
 
-public class DatabaseHelper extends SQLiteOpenHelper implements
-		DatabaseChangeListener {
-	private static final Logger logger = Logger.getLogger(DatabaseHelper.class
-			.getName());;
-	private static final String DBNAME = "centrotrackerdb";
-	private static final int VERSION = 1;
+public class DatabaseHelper extends SQLiteOpenHelper {
+	private static final Logger logger = Logger.getLogger(DatabaseHelper.class.getName());;
+	public static final String DBNAME = "centrotrackerdb";
+	public static int VERSION = 1;
 
 	public DatabaseHelper(Context context) {
 		super(context, DBNAME, null, VERSION);
@@ -34,53 +32,41 @@ public class DatabaseHelper extends SQLiteOpenHelper implements
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		try {
-			logger.log(Level.SEVERE, "Creating Database");
-
 			db.beginTransaction();
+			logger.log(Level.INFO,"Beginning Transaction");
 			db.execSQL("DROP TABLE IF EXISTS ROUTE;");
 			db.execSQL("CREATE TABLE IF NOT EXISTS ROUTE (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,ROUTENUMBER INTEGER NOT NULL,DIRECTION TEXT,ENCODEDMAP TEXT);");
 			
 			ContentValues values = new ContentValues();		
 			values.put("routenumber",286);
-			values.put("direction", "From Downtown To HenryClay");
-			values.put("encodedmap", Utility.encode(MapUtil.DownTownToHenryClay()));
-			
-			logger.log(Level.SEVERE,"Inserting record");
+			values.put("direction", "OUTBOUND");
+			values.put("encodedmap", Utility.encode(MapUtil.DownTownToHenryClay()));			
+			logger.log(Level.INFO,"Inserting record");
 			db.insert("ROUTE", null, values);	
-			logger.log(Level.SEVERE,db.rawQuery("SELECT * FROM ROUTE;",null).getCount()+" results added.");
+			
+			
+			
+			
+			logger.log(Level.INFO,db.rawQuery("SELECT * FROM ROUTE;",null).getCount()+" records added.");
 			
 			
 			
 		} catch (Exception dbException) {
-			logger.log(Level.SEVERE,
-					"Exception occured during database creation");
-			logger.log(Level.SEVERE, dbException.getMessage());
-			;
+			logger.log(Level.SEVERE,"Exception occured during database creation");
+			logger.log(Level.SEVERE, dbException.getMessage());			
 		}
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-	        
+	    if(oldVersion > 0 && oldVersion < newVersion && VERSION == oldVersion)    
+	    {
+	    	VERSION = newVersion;
+	    	onCreate(db);
+	    }
 
 	}
-
-	@Override
-	public void onTableChanged(String tableName) {
-		// TODO Auto-generated method stub
-
-	}
 	
-	
-	
-	
-
-	@Override
-	public void onTableRowChanged(String tableName, long rowId) {
-		// TODO Auto-generated method stub
-
-	}
-
 	
 
 }
