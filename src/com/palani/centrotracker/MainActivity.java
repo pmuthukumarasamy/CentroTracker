@@ -41,6 +41,7 @@ import com.palani.dataModel.Bus;
 public class MainActivity extends Activity {
 
 	private static final Logger logger = Logger.getLogger(MainActivity.class.getName());
+	public DatabaseHelper dbh = new DatabaseHelper(this);
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
@@ -48,7 +49,6 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		DatabaseHelper dbh = new DatabaseHelper(this);
 		logger.log(Level.INFO,dbh.getWritableDatabase().getPath());
 		
 		// Get a handle to the Map Fragment
@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
 		
 		
 		map.setBuildingsEnabled(true);
-//		map.setMyLocationEnabled(true);
+		map.setMyLocationEnabled(true);
 		
 		UiSettings uiSettings = map.getUiSettings();
 		uiSettings.setMyLocationButtonEnabled(true);
@@ -415,8 +415,26 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
-	
 
+	@Override
+	protected void onRestart() {		
+		super.onRestart();
+		dbh.getReadableDatabase();
+	}
+
+	@Override
+	protected void onResume() {		
+		super.onResume();
+		dbh.getReadableDatabase();
+	}
+
+	@Override
+	protected void onDestroy() {		
+		super.onDestroy();
+		dbh.close();
+	}
+	
+	
+	 
 
 }

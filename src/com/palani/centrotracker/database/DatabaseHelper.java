@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		try {
-			db.beginTransaction();
+			
 			logger.log(Level.INFO,"Beginning Transaction");
 			db.execSQL("DROP TABLE IF EXISTS ROUTE;");
 			db.execSQL("CREATE TABLE IF NOT EXISTS ROUTE (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,ROUTENUMBER VARCHAR NOT NULL,DIRECTION TEXT,ENCODEDMAP TEXT);");
