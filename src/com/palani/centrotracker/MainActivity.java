@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
