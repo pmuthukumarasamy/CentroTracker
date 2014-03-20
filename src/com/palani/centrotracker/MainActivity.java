@@ -43,7 +43,7 @@ import com.palani.dataModel.Bus;
 public class MainActivity extends Activity {
 
 	private static final Logger logger = Logger.getLogger(MainActivity.class.getName());
-	public DatabaseHelper dbh = new DatabaseHelper(this);
+	public DatabaseHelper dbh = SplashActivity.dbh;
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
@@ -51,14 +51,14 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		logger.log(Level.INFO,dbh.getWritableDatabase().getPath());
+	
 		
 		// Get a handle to the Map Fragment
 		final GoogleMap map = ((MapFragment) getFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
 
 		
-		
+		logger.log(Level.INFO,"Created map from fragment");
 		map.setBuildingsEnabled(true);
 		map.setMyLocationEnabled(true);
 		
@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
 		Bus b = new Bus();
 		b.setName("Stonedale Dr & New Hope East");
 		stopTime = new ArrayList<Date>();
-		;
+		
 
 		try {
 			stopTime.add(tformat.parse("05:31"));
@@ -377,7 +377,7 @@ public class MainActivity extends Activity {
 				.position(new LatLng(43.04320, -76.15116)));
 
 
-		PolylineOptions options = new PolylineOptions();
+		final PolylineOptions options = new PolylineOptions();
 		options.geodesic(true);
 		options.color(Color.BLUE);	
 
@@ -410,6 +410,10 @@ public class MainActivity extends Activity {
 	
 		
 		map.addPolyline(options);
+		
+		
+		
+		
 	}
 
 	@Override

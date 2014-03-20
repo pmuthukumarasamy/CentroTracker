@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public DatabaseHelper(Context context) {
 		super(context, DBNAME, null, VERSION);
-		logger.log(Level.INFO, "Database Name = {0} Version = {1}",new Object[]{DBNAME,VERSION});
+		logger.log(Level.INFO, "Database Name = "+DBNAME+" Version = "+VERSION);
 	}
 
 	public DatabaseHelper(Context context, String name, CursorFactory factory,

@@ -45,4 +45,15 @@
 		android:autoLink="web"
 		android:text="@string/webSite"
 		/>
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"        
+        android:layout_width="fill_parent"
+        android:layout_height="15dp"  
+        android:progressDrawable="@drawable/progress"
+        android:background="#FFF" />
+
 </LinearLayout>
