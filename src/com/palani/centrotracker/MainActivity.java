@@ -38,7 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.palani.centrotracker.database.DatabaseHelper;
 import com.palani.centrotracker.util.Utility;
-import com.palani.dataModel.Bus;
+import com.palani.dataModel.Stop;
 
 public class MainActivity extends Activity {
 
@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
 
 		map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 15));
 
-		final Map<LatLng, Bus> busStop = new HashMap<LatLng, Bus>();
+		final Map<LatLng, Stop> busStop = new HashMap<LatLng, Stop>();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 		String currentSchedule = sdf.format(new Date());
@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
 
 		}
 
-		Bus a = new Bus();
+		Stop a = new Stop();
 		a.setName("NorStar Apartments");
 		List<Date> stopTime = new ArrayList<Date>();
 		SimpleDateFormat tformat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
@@ -126,10 +126,10 @@ public class MainActivity extends Activity {
 
 		}
 
-		a.setSchedules(stopTime);
+		a.setSchedule(stopTime);
 		busStop.put(new LatLng(43.13137, -76.18511), a);
 
-		Bus b = new Bus();
+		Stop b = new Stop();
 		b.setName("Stonedale Dr & New Hope East");
 		stopTime = new ArrayList<Date>();
 		
@@ -145,11 +145,11 @@ public class MainActivity extends Activity {
 		} catch (ParseException e) {
 
 		}
-		b.setSchedules(stopTime);
+		b.setSchedule(stopTime);
 		if (stoneDaleRoute)
 			busStop.put(new LatLng(43.14736, -76.18372), b);
 
-		Bus c = new Bus();
+		Stop c = new Stop();
 		c.setName("Maltlage & Wetzel");
 		stopTime = new ArrayList<Date>();
 
@@ -167,10 +167,10 @@ public class MainActivity extends Activity {
 		} catch (ParseException e) {
 
 		}
-		c.setSchedules(stopTime);
+		c.setSchedule(stopTime);
 		busStop.put(new LatLng(43.14878, -76.19342), c);
 
-		Bus d = new Bus();
+		Stop d = new Stop();
 		d.setName("Merril Farms (Harvest & Cedarpost)");
 		stopTime = new ArrayList<Date>();
 
@@ -181,11 +181,11 @@ public class MainActivity extends Activity {
 		} catch (ParseException e) {
 
 		}
-		d.setSchedules(stopTime);
+		d.setSchedule(stopTime);
 		if (taftRoute)
 			busStop.put(new LatLng(43.12685, -76.16996), d);
 
-		Bus e = new Bus();
+		Stop e = new Stop();
 		e.setName("North Medical Center");
 		stopTime = new ArrayList<Date>();
 
@@ -203,10 +203,10 @@ public class MainActivity extends Activity {
 		} catch (ParseException e3) {
 
 		}
-		e.setSchedules(stopTime);
+		e.setSchedule(stopTime);
 		busStop.put(new LatLng(43.11959, -76.16141), e);
 
-		Bus f = new Bus();
+		Stop f = new Stop();
 		f.setName("7th North & Buckley Rd");
 		stopTime = new ArrayList<Date>();
 
@@ -224,10 +224,10 @@ public class MainActivity extends Activity {
 		} catch (ParseException e4) {
 
 		}
-		f.setSchedules(stopTime);
+		f.setSchedule(stopTime);
 		busStop.put(new LatLng(43.09338, -76.17107), f);
 
-		Bus g = new Bus();
+		Stop g = new Stop();
 		g.setName("Washington & Franklin St");
 		stopTime = new ArrayList<Date>();
 
@@ -245,9 +245,9 @@ public class MainActivity extends Activity {
 		} catch (ParseException e5) {
 
 		}
-		g.setSchedules(stopTime);
+		g.setSchedule(stopTime);
 		busStop.put(new LatLng(43.04963, -76.15552), g);
-		Bus h = new Bus();
+		Stop h = new Stop();
 		h.setName("S State & Madison St");
 		stopTime = new ArrayList<Date>();
 
@@ -265,10 +265,10 @@ public class MainActivity extends Activity {
 		} catch (ParseException e6) {
 
 		}
-		h.setSchedules(stopTime);
+		h.setSchedule(stopTime);
 		busStop.put(new LatLng(43.04547, -76.14750), h);
 
-		Bus i = new Bus();
+		Stop i = new Stop();
 		i.setName("Salina & Adams St");
 		List<Date> istopTime = new ArrayList<Date>();
 
@@ -286,13 +286,13 @@ public class MainActivity extends Activity {
 		} catch (ParseException e7) {
 
 		}
-		i.setSchedules(istopTime);
+		i.setSchedule(istopTime);
 		busStop.put(new LatLng(43.04331, -76.15086), i);
 
-		Iterator<Entry<LatLng, Bus>> iterator = busStop.entrySet().iterator();
+		Iterator<Entry<LatLng, Stop>> iterator = busStop.entrySet().iterator();
 
 		while (iterator.hasNext()) {
-			Map.Entry<LatLng, Bus> stop = (Map.Entry<LatLng, Bus>) iterator
+			Map.Entry<LatLng, Stop> stop = (Map.Entry<LatLng, Stop>) iterator
 					.next();
 			map.addMarker(new MarkerOptions()
 
@@ -305,7 +305,7 @@ public class MainActivity extends Activity {
 		}
 
 		map.setInfoWindowAdapter(new InfoWindowAdapter() {
-			Map<LatLng, Bus> localStop = busStop;
+			Map<LatLng, Stop> localStop = busStop;
 
 			@Override
 			public View getInfoWindow(Marker marker) {
@@ -334,13 +334,13 @@ public class MainActivity extends Activity {
 					LatLng roundedPosition = new LatLng(latitude,longitude);
 					
 					
-					Bus bus = localStop.get(roundedPosition);					
+					Stop bus = localStop.get(roundedPosition);					
 					
 					if (bus != null) {
 						stopName += "Stop Name : \t" + bus.getName();
 
 						int count = 0;
-						for (Date schedule : bus.getSchedules()) {
+						for (Date schedule : bus.getSchedule()) {
 							SimpleDateFormat cdf = new SimpleDateFormat(
 									"HH:mm", Locale.ENGLISH);
 

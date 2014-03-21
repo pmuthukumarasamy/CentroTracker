@@ -35,26 +35,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			logger.log(Level.INFO,"Beginning Transaction");
 			db.execSQL("DROP TABLE IF EXISTS ROUTE;");
 			db.execSQL("CREATE TABLE IF NOT EXISTS ROUTE (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,ROUTENUMBER VARCHAR NOT NULL,DIRECTION TEXT,ENCODEDMAP TEXT);");
-			
-			ContentValues values = new ContentValues();		
-			values.put("routenumber","286");
-			values.put("direction", "OUTBOUND");
-			values.put("encodedmap", Utility.encode(MapUtil.route286OutBound()));			
-			logger.log(Level.INFO,"Inserting record");
-			db.insert("ROUTE", null, values);		
-			
-			values = new ContentValues();
-			values.put("routenumber", "186A");
-			values.put("direction", "OUTBOUND");
-			values.put("encodedMap", Utility.encode(MapUtil.route186AOutBound()));
-			db.insert("ROUTE", null, values);
-			
-			
-			values = new ContentValues();
-			values.put("routenumber","186B");
-			values.put("direction","OUTBOUND");
-			values.put("encodedMap",Utility.encode(MapUtil.route186BOutBound()));
-			db.insert("ROUTE", null, values);
+			db.execSQL("CREATE TABLE IF NOT EXISTS STOP (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,NAME VARCHAR NOT NULL,ROUTENUMBER VARCHAR NOT NULL,SCHEDULE TEXT,LOCATION TEXT);");
+			insertRoutes(db);
+			insertStops(db);
 			
 			logger.log(Level.INFO,db.rawQuery("SELECT * FROM ROUTE;",null).getCount()+" records added.");
 			
@@ -64,6 +47,71 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			logger.log(Level.SEVERE,"Exception occured during database creation");
 			logger.log(Level.SEVERE, dbException.getMessage());			
 		}
+	}
+
+	private void insertRoutes(SQLiteDatabase db) {
+		ContentValues values = new ContentValues();		
+		values.put("routenumber","286");
+		values.put("direction", "OUTBOUND");
+		values.put("encodedmap", Utility.encode(MapUtil.route286OutBound()));			
+		logger.log(Level.INFO,"Inserting record");
+		db.insert("ROUTE", null, values);		
+		
+		values = new ContentValues();
+		values.put("routenumber", "186A");
+		values.put("direction", "OUTBOUND");
+		values.put("encodedMap", Utility.encode(MapUtil.route186AOutBound()));
+		db.insert("ROUTE", null, values);
+		
+		
+		values = new ContentValues();
+		values.put("routenumber","186B");
+		values.put("direction","OUTBOUND");
+		values.put("encodedMap",Utility.encode(MapUtil.route186BOutBound()));
+		db.insert("ROUTE", null, values);
+	}
+	
+	private void insertStops(SQLiteDatabase db){
+		ContentValues values = new ContentValues();
+		
+		values = new ContentValues();
+		values.put("name", "Salina & Adams St");
+		values.put("routenumber", "286");
+		values.put("schedule", "05:03,05:43,6:15,06:58,08:45,11:50,15:00,15:50,16:45,17:35");
+		values.put("location", "43.14736, -76.18372");
+		
+		values = new ContentValues();
+		values.put("name", "Salina & Adams St");
+		values.put("routenumber", "186A");
+		values.put("schedule", "05:03,05:43,6:15,06:58,08:45,11:50,15:00,15:50,16:45,17:35");
+		values.put("location", "43.14736, -76.18372");
+		
+		values = new ContentValues();
+		values.put("name", "Salina & Adams St");
+		values.put("routenumber", "186B");
+		values.put("schedule", "05:03,05:43,6:15,06:58,08:45,11:50,15:00,15:50,16:45,17:35");
+		values.put("location", "43.14736, -76.18372");
+		
+		
+		values = new ContentValues();
+		values.put("name", "S State & Madison St");
+		values.put("routenumber", "286");
+		values.put("schedule", "05:03,05:43,6:15,06:58,08:45,11:50,15:00,15:50,16:45,17:35");
+		values.put("location", "43.14736, -76.18372");
+		
+		values = new ContentValues();
+		values.put("name", "Stonedale Dr & New Hope East");
+		values.put("routenumber", "186A");
+		values.put("schedule", "05:31,06:46,09:16,15:31");
+		values.put("location", "43.14736, -76.18372");
+		
+		values = new ContentValues();
+		values.put("name", "Stonedale Dr & New Hope East");
+		values.put("routenumber", "186B");
+		values.put("schedule", "16:27,17:22,18:12");
+		values.put("location", "43.14736, -76.18372");
+		
+		db.insert("STOP", null, values);
 	}
 
 	@Override
